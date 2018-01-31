@@ -1,0 +1,40 @@
+version: '2'
+services:
+    redis:
+        image: "redis"
+
+    worker:
+        build: executors
+        volumes:
+            - ./executors/:/app/
+        links:
+            - redis
+        depends_on:
+            - redis
+        environment:
+            BROKER_HOST: "redis"
+            BROKER_PORT: 6379
+            DB_NUMBER: 0
+            PYTHONUNBUFFERED: "1"
+
+    web:
+        build: cluster_client
+        volumes:
+            - ./cluster_client/:/app/
+        command: python3 manage.py runserver 0.0.0.0:8000
+        links:
+            - redis
+            - worker
+        depends_on:
+            - redis
+            - worker
+        ports:
+            - "8000:8000"
+        environment:
+            BROKER_HOST: "redis"
+            BROKER_PORT: 6379
+            DB_NUMBER: 0
+            PYTHONUNBUFFERED: "1"
+
+    database:
+        image: postgres
