@@ -25,9 +25,11 @@ services:
         links:
             - redis
             - worker
+            - database
         depends_on:
             - redis
             - worker
+            - database
         ports:
             - "8000:8000"
         environment:
