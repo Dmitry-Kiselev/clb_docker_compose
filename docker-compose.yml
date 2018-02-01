@@ -4,9 +4,9 @@ services:
         image: "redis"
 
     worker:
-        build: executors
+        build: clb_executor
         volumes:
-            - ./executors/:/app/
+            - ./clb_executor/:/app/
         links:
             - redis
         depends_on:
@@ -18,9 +18,9 @@ services:
             PYTHONUNBUFFERED: "1"
 
     web:
-        build: cluster_client
+        build: clb_client
         volumes:
-            - ./cluster_client/:/app/
+            - ./clb_client/:/app/
         command: python3 manage.py runserver 0.0.0.0:8000
         links:
             - redis
